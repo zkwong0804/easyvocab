@@ -36,8 +36,8 @@ def get_files_name(folder):
     name_list.sort()
     return name_list
 
-def get_full_dir(filename):
-    return "./list/{}".format(filename)
+def get_full_dir(folder, filename):
+    return "./{}/{}".format(folder, filename)
 
 def get_meaning(word):
     meanings = []
@@ -80,7 +80,7 @@ def create_list():
         print("Duplicated name found!\n")
     else:
         print("File name is good to go!\n")
-        f = open(get_full_dir(list_name), "w");
+        f = open(get_full_dir("list", list_name), "w");
         f.write("{\"list\":[]}")
         f.close()
 
@@ -100,7 +100,7 @@ def add_vocab():
             word_list.append(next_word)
 
     local_dict_json = open("local_dict.json", "r")
-    vocab_list_json = open(get_full_dir(chosen_file), "r")
+    vocab_list_json = open(get_full_dir("list", chosen_file), "r")
 
     local_dict = json.loads(local_dict_json.read())
     local_dict_json.close()
@@ -124,7 +124,7 @@ def add_vocab():
             print("\t* {}".format(e))
 
     local_dict_json = open("local_dict.json", "w")
-    vocab_list_json = open(get_full_dir(chosen_file), "w")
+    vocab_list_json = open(get_full_dir("list", chosen_file), "w")
     local_dict_json.write(json.dumps(local_dict))
     vocab_list_json.write(json.dumps(vocab_list))
     local_dict_json.close()
@@ -138,7 +138,7 @@ def export_list():
     ws = wb.add_sheet("Sheet 1")
 
     local_dict_json = open("local_dict.json", "r")
-    vocab_list_json = open(get_full_dir(chosen_file), "r")
+    vocab_list_json = open(get_full_dir("list", chosen_file), "r")
     local_dict = json.loads(local_dict_json.read())
     vocab_list = json.loads(vocab_list_json.read())
     local_dict_json.close()
@@ -159,6 +159,10 @@ def export_list():
 def import_book():
     chosen_book = chose_file("books", "Please choose your book: ")
     print("You have chosen {}".format(chosen_book))
+    book = open(get_full_dir("books", chosen_book), "r")
+    for lines in book:
+        for word in lines.split():
+            print(word)
     
 
 def main():
