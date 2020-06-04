@@ -17,7 +17,8 @@ def print_menu():
     print("1. Create vocab list")
     print("2. Add vocab to list")
     print("3. Export vocab list")
-    print("4. Exit")
+    print("4. import txt book")
+    print("5. Exit")
 
     return input("\n\nYour action: ")
 
@@ -27,11 +28,13 @@ def clear():
     else:
         _ = os.system("clear")
 
-def get_files_name():
+def get_files_name(folder):
     name_list = []
-    for name in os.listdir("./list"):
+    for name in os.listdir("./{}".format(folder)):
         name_list.append(name)
-    return name_list;
+
+    name_list.sort()
+    return name_list
 
 def get_full_dir(filename):
     return "./list/{}".format(filename)
@@ -45,10 +48,10 @@ def get_meaning(word):
     
     return meanings
 
-def chose_file():
+def chose_file(folder, prompt_txt):
     is_file_chosen = False
     chosen_file = ""
-    name_list = get_files_name()
+    name_list = get_files_name(folder)
     while not is_file_chosen:
         for i in range(len(name_list)):
             print("{}. {}".format(i, name_list[i]))
@@ -56,7 +59,7 @@ def chose_file():
         opt = 0
         raw_opt = "";
         try:
-            raw_opt = input("Select vocab list: ")
+            raw_opt = input(prompt_txt)
             opt = int(raw_opt)
             chosen_file = name_list[opt]
             is_file_chosen = True
@@ -73,7 +76,7 @@ def create_list():
         list_name = datetime.datetime.now().strftime("%d%m%y");
     list_name = "{}.json".format(list_name)
     clear()
-    if list_name in get_files_name():
+    if list_name in get_files_name("list"):
         print("Duplicated name found!\n")
     else:
         print("File name is good to go!\n")
@@ -82,7 +85,7 @@ def create_list():
         f.close()
 
 def add_vocab():
-    chosen_file = chose_file()
+    chosen_file = chose_file("list", "Select vocab list: ")
 
     print("You have chosen: {}".format(chosen_file))
     print("Insert process start! (type \"exit!\" to stop the process!)")
@@ -130,7 +133,7 @@ def add_vocab():
     print("{} updated!\n".format(chosen_file))
 
 def export_list():
-    chosen_file = chose_file()
+    chosen_file = chose_file("list", "Select vocab list: ")
     wb = xlwt.Workbook(encoding="UTF-8")
     ws = wb.add_sheet("Sheet 1")
 
@@ -153,6 +156,11 @@ def export_list():
     clear()
     print("{}.xls has been exported to the program root directory!\n".format(chosen_file))
 
+def import_book():
+    chosen_book = chose_file("books", "Please choose your book: ")
+    print("You have chosen {}".format(chosen_book))
+    
+
 def main():
     leave_program = False
     
@@ -163,6 +171,9 @@ def main():
 
     if not os.path.isdir("./list"):
         os.mkdir("./list")
+
+    if not os.path.isdir("./books"):
+        os.mkdir("./books")
         
     while not leave_program:
         opt = print_menu()
@@ -173,6 +184,9 @@ def main():
         elif opt == "3":
             export_list()
         elif opt == "4":
+            import_book()
+            leave_program = True
+        elif opt == "5":
             print("Bye bye")
             leave_program = True
         else:
