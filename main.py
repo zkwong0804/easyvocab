@@ -63,7 +63,11 @@ def add_list_dict(word_list, vocab_list, chosen_file):
     with open(get_full_dir("list", chosen_file), "r") as vocab_list_json:
         vocab_list = json.loads(vocab_list_json.read())
 
+    list_len = len(word_list)
+    counter = 1
     for e in word_list:
+        print("Progress: {:.2f}%".format((counter/list_len)*100))
+        counter += 1
         if e in local_dict:
             searched_before.append(e)
         else:
@@ -82,8 +86,9 @@ def add_list_dict(word_list, vocab_list, chosen_file):
     with open("local_dict.json", "w") as local_dict_json:
         local_dict_json.write(json.dumps(local_dict))
 
+    vocab_list["list"].sort()
     with open(get_full_dir("list", chosen_file), "w") as vocab_list_json:
-        vocab_list_json.write(json.dumps(vocab_list_json))
+        vocab_list_json.write(json.dumps(vocab_list))
 
     print("\nlocal dictionary updated!")
     print("{} updated!\n".format(chosen_file))
@@ -201,15 +206,17 @@ def import_book():
 
     print("Please select the word that you already knew!\n")
 
-    for i in range(len(word_list)):
+    total_words = len(word_list)
+    for i in range(total_words):
         if word_list[i] not in known_list:
             usr_input = input(
-                "{}. {}\t[ Enter or No ]".format(i+1, word_list[i]))
+                "[{:.2f}%]{}. {}\t[ Enter or No ]".format((i+1)/total_words*100, i+1, word_list[i]))
             if usr_input == "":
                 known_list.append(word_list[i])
             else:
                 unknown_list.append(word_list[i])
 
+    known_list.sort()
     with open("known.txt", "w") as known_txt:
         for e in known_list:
             known_txt.write("{}\n".format(e))
@@ -245,7 +252,6 @@ def main():
             export_list()
         elif opt == "4":
             import_book()
-            leave_program = True
         elif opt == "5":
             print("Bye bye")
             leave_program = True
